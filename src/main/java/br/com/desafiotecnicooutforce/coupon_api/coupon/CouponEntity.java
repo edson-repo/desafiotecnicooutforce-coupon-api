@@ -1,5 +1,7 @@
 package br.com.desafiotecnicooutforce.coupon_api.coupon;
 
+import br.com.desafiotecnicooutforce.coupon_api.exception.BusinessException;
+import br.com.desafiotecnicooutforce.coupon_api.exception.CouponAlreadyDeletedException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,8 +20,8 @@ import java.util.UUID;
 /**
  * Entidade que representa o cupom no sistema.
  *
- * Além de mapear a tabela, ela já concentra as regras principais
- * de criação do cupom, deixando a lógica mais próxima do domínio.
+ * As regras principais ficam aqui para manter a lógica
+ * mais próxima do domínio.
  */
 @Entity
 @Table(name = "tb_coupon")
@@ -58,7 +60,7 @@ public class CouponEntity {
     private LocalDateTime deletedAt;
 
     /**
-     * Método de criação do cupom já aplicando as regras do domínio.
+     * Cria um novo cupom já aplicando as regras de negócio da criação.
      */
     public static CouponEntity create(
             String code,
@@ -69,13 +71,14 @@ public class CouponEntity {
     ) {
         String sanitizedCode = sanitizeCode(code);
         validateCode(sanitizedCode);
+        validateDescription(description);
         validateDiscountValue(discountValue);
         validateExpirationDate(expirationDate);
 
         CouponEntity coupon = new CouponEntity();
         coupon.setId(UUID.randomUUID());
         coupon.setCode(sanitizedCode);
-        coupon.setDescription(description != null ? description.trim() : null);
+        coupon.setDescription(description.trim());
         coupon.setDiscountValue(discountValue);
         coupon.setExpirationDate(expirationDate);
         coupon.setStatus(CouponStatus.ACTIVE);
@@ -87,12 +90,23 @@ public class CouponEntity {
     }
 
     /**
-     * Prepara o cupom para exclusão lógica.
-     * A validação mais detalhada será tratada no fluxo de serviço.
+     * Aplica o soft delete no cupom.
+     * Se ele já estiver deletado, a regra bloqueia uma nova exclusão.
      */
     public void softDelete() {
+        if (isDeleted()) {
+            throw new CouponAlreadyDeletedException("O cupom já foi deletado.");
+        }
+
         this.status = CouponStatus.DELETED;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Indica se o cupom já foi deletado logicamente.
+     */
+    public boolean isDeleted() {
+        return this.deletedAt != null || CouponStatus.DELETED.equals(this.status);
     }
 
     /**
@@ -107,15 +121,24 @@ public class CouponEntity {
     }
 
     /**
-     * O código final precisa ter exatamente 6 caracteres alfanuméricos.
+     * O código final precisa ter exatamente 6 caracteres.
      */
     private static void validateCode(String code) {
         if (code == null || code.isBlank()) {
-            throw new IllegalArgumentException("O código do cupom é obrigatório.");
+            throw new BusinessException("O código do cupom é obrigatório.");
         }
 
         if (code.length() != 6) {
-            throw new IllegalArgumentException("O código do cupom deve ter exatamente 6 caracteres alfanuméricos.");
+            throw new BusinessException("O código do cupom deve ter exatamente 6 caracteres alfanuméricos.");
+        }
+    }
+
+    /**
+     * A descrição é obrigatória.
+     */
+    private static void validateDescription(String description) {
+        if (description == null || description.isBlank()) {
+            throw new BusinessException("A descrição do cupom é obrigatória.");
         }
     }
 
@@ -124,24 +147,24 @@ public class CouponEntity {
      */
     private static void validateDiscountValue(BigDecimal discountValue) {
         if (discountValue == null) {
-            throw new IllegalArgumentException("O valor de desconto é obrigatório.");
+            throw new BusinessException("O valor de desconto é obrigatório.");
         }
 
         if (discountValue.compareTo(new BigDecimal("0.5")) < 0) {
-            throw new IllegalArgumentException("O valor mínimo de desconto é 0.5.");
+            throw new BusinessException("O valor mínimo de desconto é 0.5.");
         }
     }
 
     /**
-     * Não permite criar cupom com data de expiração no passado.
+     * Não permite cupom com data de expiração no passado.
      */
     private static void validateExpirationDate(LocalDateTime expirationDate) {
         if (expirationDate == null) {
-            throw new IllegalArgumentException("A data de expiração é obrigatória.");
+            throw new BusinessException("A data de expiração é obrigatória.");
         }
 
         if (expirationDate.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("A data de expiração não pode estar no passado.");
+            throw new BusinessException("A data de expiração não pode estar no passado.");
         }
     }
 }
