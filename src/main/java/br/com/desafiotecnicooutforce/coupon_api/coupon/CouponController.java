@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,6 +30,15 @@ public class CouponController {
     public ResponseEntity<CouponResponseDTO> create(@Valid @RequestBody CouponRequestDTO requestDTO) {
         CouponResponseDTO response = couponService.create(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * Retorna todos os cupons ativos.
+     */
+    @GetMapping
+    public ResponseEntity<List<CouponResponseDTO>> findAll() {
+        List<CouponResponseDTO> response = couponService.findAll();
+        return ResponseEntity.ok(response);
     }
 
     /**

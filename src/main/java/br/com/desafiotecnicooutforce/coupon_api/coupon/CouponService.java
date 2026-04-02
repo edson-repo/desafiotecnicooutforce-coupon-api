@@ -7,6 +7,7 @@ import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponResponseDTO;
 import br.com.desafiotecnicooutforce.coupon_api.exception.CouponNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -44,6 +45,16 @@ public class CouponService {
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado."));
 
         return couponMapper.toResponseDTO(coupon);
+    }
+
+    /**
+     * Retorna todos os cupons ativos.
+     */
+    public List<CouponResponseDTO> findAll() {
+        return couponRepository.findAll()
+                .stream()
+                .map(couponMapper::toResponseDTO)
+                .toList();
     }
 
     /**
