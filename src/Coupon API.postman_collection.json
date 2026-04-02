@@ -1,0 +1,84 @@
+{
+	"info": {
+		"_postman_id": "83a2d545-f30f-47f0-95c6-0523c0f12d3a",
+		"name": "Coupon API",
+		"description": "Collection do desafio técnico de cupons.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41273562"
+	},
+	"item": [
+		{
+			"name": "Create Coupon",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"code\": \"ABC-123\",\n  \"description\": \"Cupom de desconto\",\n  \"discountValue\": 10.5,\n  \"expirationDate\": \"2026-12-31T23:59:59\",\n  \"published\": true\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/coupon",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"coupon"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Coupon By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/coupon/{{couponId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"coupon",
+						"{{couponId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Coupon",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/coupon/{{couponId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"coupon",
+						"{{couponId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "couponId",
+			"value": ""
+		}
+	]
+}
