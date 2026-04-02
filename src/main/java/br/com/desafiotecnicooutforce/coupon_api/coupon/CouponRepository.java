@@ -1,37 +1,17 @@
 package br.com.desafiotecnicooutforce.coupon_api.coupon;
 
+import br.com.desafiotecnicooutforce.coupon_api.repository.IGenericRepository;
+
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Contrato de persistência do cupom.
- *
- * A ideia aqui é manter a aplicação dependente desta interface,
- * e não diretamente do Spring Data.
  */
-public interface CouponRepository {
+public interface CouponRepository extends IGenericRepository<CouponEntity, UUID> {
 
     /**
-     * Salva um cupom no banco.
-     */
-    CouponEntity save(CouponEntity coupon);
-
-    /**
-     * Busca um cupom ativo pelo id.
-     * Esse método será o mais usado nos fluxos normais da aplicação.
-     */
-    Optional<CouponEntity> findActiveById(UUID id);
-
-    /**
-     * Busca um cupom pelo id, incluindo registros já deletados.
-     * Esse método será útil no fluxo de delete para saber
-     * se o cupom já foi excluído antes.
-     */
-    Optional<CouponEntity> findById(UUID id);
-
-    /**
-     * Busca apenas cupons que ainda não passaram por soft delete.
+     * Busca um cupom pelo id apenas se ele ainda não foi deletado.
      */
     Optional<CouponEntity> findByIdAndDeletedAtIsNull(UUID id);
-
 }

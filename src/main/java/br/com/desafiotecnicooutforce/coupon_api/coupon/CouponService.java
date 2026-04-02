@@ -40,7 +40,7 @@ public class CouponService {
      * Busca um cupom ativo pelo id.
      */
     public CouponResponseDTO findById(UUID id) {
-        CouponEntity coupon = couponRepository.findActiveById(id)
+        CouponEntity coupon = couponRepository.findById(id)
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado."));
 
         return couponMapper.toResponseDTO(coupon);
