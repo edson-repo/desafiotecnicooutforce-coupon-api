@@ -1,6 +1,4 @@
-package br.com.desafiotecnicooutforce.coupon_api.coupon.couponRepository;
-
-import br.com.desafiotecnicooutforce.coupon_api.coupon.CouponEntity;
+package br.com.desafiotecnicooutforce.coupon_api.coupon;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,7 +1,5 @@
-package br.com.desafiotecnicooutforce.coupon_api.coupon.service;
+package br.com.desafiotecnicooutforce.coupon_api.coupon;
 
-import br.com.desafiotecnicooutforce.coupon_api.coupon.CouponEntity;
-import br.com.desafiotecnicooutforce.coupon_api.coupon.couponRepository.CouponRepository;
 import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponMapper;
 import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponRequestDTO;
 import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponResponseDTO;
