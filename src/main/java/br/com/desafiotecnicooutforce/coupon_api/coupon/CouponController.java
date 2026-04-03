@@ -36,8 +36,10 @@ public class CouponController {
      * Retorna todos os cupons ativos.
      */
     @GetMapping
-    public ResponseEntity<List<CouponResponseDTO>> findAll() {
-        List<CouponResponseDTO> response = couponService.findAll();
+    public ResponseEntity<List<CouponResponseDTO>> findAll(
+            @RequestParam(required = false) CouponStatus status
+    ) {
+        List<CouponResponseDTO> response = couponService.findAll(status);
         return ResponseEntity.ok(response);
     }
 

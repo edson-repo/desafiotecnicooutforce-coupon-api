@@ -4,6 +4,7 @@ import br.com.desafiotecnicooutforce.coupon_api.repository.IGenericRepository;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 /**
  * Contrato de persistência do cupom.
@@ -11,7 +12,8 @@ import java.util.UUID;
 public interface CouponRepository extends IGenericRepository<CouponEntity, UUID> {
 
     /**
-     * Busca um cupom pelo id apenas se ele ainda não foi deletado.
+     * Retorna apenas os cupons ativos ou desativados.
      */
-    Optional<CouponEntity> findByIdAndDeletedAtIsNull(UUID id);
+    List<CouponEntity> findAllByStatus(CouponStatus status);
+
 }

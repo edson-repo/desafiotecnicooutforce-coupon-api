@@ -47,12 +47,30 @@ public class CouponService {
         return couponMapper.toResponseDTO(coupon);
     }
 
+//    /**
+//     * Retorna todos os cupons ativos.
+//     */
+//    public List<CouponResponseDTO> findAll() {
+//        return couponRepository.findAll()
+//                .stream()
+//                .map(couponMapper::toResponseDTO)
+//                .toList();
+//    }
+
     /**
-     * Retorna todos os cupons ativos.
+     * Retorna os cupons com filtro opcional por status.
+     * Se o status vier nulo, retorna todos.
      */
-    public List<CouponResponseDTO> findAll() {
-        return couponRepository.findAll()
-                .stream()
+    public List<CouponResponseDTO> findAll(CouponStatus status) {
+        List<CouponEntity> coupons;
+
+        if (status == null) {
+            coupons = couponRepository.findAll();
+        } else {
+            coupons = couponRepository.findAllByStatus(status);
+        }
+
+        return coupons.stream()
                 .map(couponMapper::toResponseDTO)
                 .toList();
     }

@@ -20,6 +20,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class CouponControllerIntegrationTest {
@@ -127,5 +130,94 @@ class CouponControllerIntegrationTest {
         mockMvc.perform(delete("/coupon/{id}", savedCoupon.getId()))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message", is("O cupom já foi deletado.")));
+    }
+
+    @Test
+    @DisplayName("Deve retornar todos os cupons quando não informar status")
+    void shouldReturnAllCouponsWhenStatusIsNotInformed() throws Exception {
+        CouponEntity activeCoupon = CouponEntity.create(
+                "ABC123",
+                "Cupom ativo",
+                new BigDecimal("10.00"),
+                LocalDateTime.now().plusDays(2),
+                true
+        );
+
+        CouponEntity deletedCoupon = CouponEntity.create(
+                "DEF456",
+                "Cupom deletado",
+                new BigDecimal("20.00"),
+                LocalDateTime.now().plusDays(2),
+                false
+        );
+        deletedCoupon.softDelete();
+
+        couponRepository.save(activeCoupon);
+        couponRepository.save(deletedCoupon);
+
+        mockMvc.perform(get("/coupon"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[*].code", hasItems("ABC123", "DEF456")));
+    }
+
+    @Test
+    @DisplayName("Deve retornar apenas cupons ativos quando status for ACTIVE")
+    void shouldReturnOnlyActiveCouponsWhenStatusIsActive() throws Exception {
+        CouponEntity activeCoupon = CouponEntity.create(
+                "ABC123",
+                "Cupom ativo",
+                new BigDecimal("10.00"),
+                LocalDateTime.now().plusDays(2),
+                true
+        );
+
+        CouponEntity deletedCoupon = CouponEntity.create(
+                "DEF456",
+                "Cupom deletado",
+                new BigDecimal("20.00"),
+                LocalDateTime.now().plusDays(2),
+                false
+        );
+        deletedCoupon.softDelete();
+
+        couponRepository.save(activeCoupon);
+        couponRepository.save(deletedCoupon);
+
+        mockMvc.perform(get("/coupon").param("status", "ACTIVE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].code", is("ABC123")))
+                .andExpect(jsonPath("$[0].status", is("ACTIVE")));
+    }
+
+    @Test
+    @DisplayName("Deve retornar apenas cupons deletados quando status for DELETED")
+    void shouldReturnOnlyDeletedCouponsWhenStatusIsDeleted() throws Exception {
+        CouponEntity activeCoupon = CouponEntity.create(
+                "ABC123",
+                "Cupom ativo",
+                new BigDecimal("10.00"),
+                LocalDateTime.now().plusDays(2),
+                true
+        );
+
+        CouponEntity deletedCoupon = CouponEntity.create(
+                "DEF456",
+                "Cupom deletado",
+                new BigDecimal("20.00"),
+                LocalDateTime.now().plusDays(2),
+                false
+        );
+        deletedCoupon.softDelete();
+
+        couponRepository.save(activeCoupon);
+        couponRepository.save(deletedCoupon);
+
+        mockMvc.perform(get("/coupon").param("status", "DELETED"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].code", is("DEF456")))
+                .andExpect(jsonPath("$[0].status", is("DELETED")));
     }
 }
