@@ -1,15 +1,17 @@
 # Coupon API
 
-API REST desenvolvida em Java com Spring Boot para o desafio técnico de gerenciamento de cupons.
+API REST desenvolvida em Java com Spring Boot para um desafio técnico de gerenciamento de cupons.
 
-O projeto foi construído com foco em código limpo, regras de negócio claras e estrutura simples de entender.
+A proposta do projeto foi manter a solução simples, organizada e com as regras de negócio bem definidas, sem complexidade desnecessária.
 
-## O que a API faz
+## Funcionalidades
 
 A API permite:
 
 - criar cupons
-- buscar cupons por id
+- buscar um cupom por id
+- listar cupons
+- listar cupons com filtro por status
 - remover cupons com soft delete
 
 ## Regras implementadas
@@ -28,6 +30,13 @@ A API permite:
 - a exclusão é lógica, sem apagar o registro do banco
 - um cupom já deletado não pode ser deletado novamente
 
+### Listagem de cupons
+O endpoint de listagem possui 3 comportamentos:
+
+- `GET /coupon` → retorna todos os cupons
+- `GET /coupon?status=ACTIVE` → retorna apenas os cupons ativos
+- `GET /coupon?status=DELETED` → retorna apenas os cupons deletados
+
 ## Tecnologias usadas
 
 - Java 17
@@ -45,11 +54,11 @@ A API permite:
 
 ## Estrutura do projeto
 
-A aplicação foi organizada para manter as regras de negócio próximas do domínio e deixar as responsabilidades separadas de forma simples:
+O projeto foi organizado de forma simples, separando as responsabilidades principais da aplicação:
 
-- `config` → configurações da aplicação
+- `config` → configurações gerais
 - `coupon` → regra principal do cupom
-- `dto` → entrada e saída da API
+- `dto` → objetos de entrada e saída da API
 - `repository` → acesso a dados
 - `service` → fluxo da aplicação
 - `exception` → tratamento de erros
@@ -59,13 +68,20 @@ A aplicação foi organizada para manter as regras de negócio próximas do dom�
 ### Criar cupom
 `POST /coupon`
 
+### Listar todos os cupons
+`GET /coupon`
+
+### Listar cupons por status
+`GET /coupon?status=ACTIVE`  
+`GET /coupon?status=DELETED`
+
 ### Buscar cupom por id
 `GET /coupon/{id}`
 
 ### Deletar cupom
 `DELETE /coupon/{id}`
 
-## Exemplo de requisição
+## Exemplo de requisição para criação
 
 ```json
 {

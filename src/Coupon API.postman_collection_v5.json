@@ -20,7 +20,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"code\": \"ABC-123\",\n  \"description\": \"Cupom de desconto\",\n  \"discountValue\": 10.5,\n  \"expirationDate\": \"2026-12-31T23:59:59\",\n  \"published\": true\n}"
+					"raw": "{\n  \"codigo\": \"ABC-123\",\n  \"descricao\": \"Cupom de desconto\",\n  \"valorDesconto\": 10.5,\n  \"dataExpiracao\": \"2026-12-31T23:59:59\",\n  \"publicado\": true\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/coupon",
@@ -47,6 +47,29 @@
 					"path": [
 						"coupon",
 						"{{couponId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Coupon",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/coupon?status=",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"coupon"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": ""
+						}
 					]
 				}
 			},

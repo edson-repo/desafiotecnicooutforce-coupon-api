@@ -20,11 +20,11 @@ import java.util.UUID;
 public class CouponResponseDTO {
 
     private UUID id;
-    private String code;
-    private String description;
-    private BigDecimal discountValue;
-    private LocalDateTime expirationDate;
+    private String codigo;
+    private String descricao;
+    private BigDecimal valorDesconto;
+    private LocalDateTime dataExpiracao;
     private CouponStatus status;
-    private Boolean published;
-    private Boolean redeemed;
+    private Boolean publicado;
+    private Boolean utilizado;
 }

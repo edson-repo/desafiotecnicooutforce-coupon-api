@@ -15,11 +15,11 @@ public class CouponMapper {
      */
     public CouponEntity toEntity(CouponRequestDTO requestDTO) {
         return CouponEntity.create(
-                requestDTO.getCode(),
-                requestDTO.getDescription(),
-                requestDTO.getDiscountValue(),
-                requestDTO.getExpirationDate(),
-                requestDTO.getPublished()
+                requestDTO.getCodigo(),
+                requestDTO.getDescricao(),
+                requestDTO.getValorDesconto(),
+                requestDTO.getDataExpiracao(),
+                requestDTO.getPublicado()
         );
     }
 
@@ -29,13 +29,13 @@ public class CouponMapper {
     public CouponResponseDTO toResponseDTO(CouponEntity entity) {
         return new CouponResponseDTO(
                 entity.getId(),
-                entity.getCode(),
-                entity.getDescription(),
-                entity.getDiscountValue(),
-                entity.getExpirationDate(),
+                entity.getCodigo(),
+                entity.getDescricao(),
+                entity.getValorDesconto(),
+                entity.getDataExpiracao(),
                 entity.getStatus(),
-                entity.getPublished(),
-                entity.getRedeemed()
+                entity.getPublicado(),
+                entity.getUtilizado()
         );
     }
 }

@@ -1,10 +1,8 @@
 package br.com.desafiotecnicooutforce.coupon_api.coupon;
 
-import br.com.desafiotecnicooutforce.coupon_api.coupon.CouponEntity;
 import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponMapper;
 import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponRequestDTO;
 import br.com.desafiotecnicooutforce.coupon_api.coupon.dto.CouponResponseDTO;
-
 import br.com.desafiotecnicooutforce.coupon_api.exception.CouponNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +16,14 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CouponServiceTest {
@@ -35,8 +39,8 @@ class CouponServiceTest {
 
     @Test
     @DisplayName("Deve criar e salvar um cupom com sucesso")
-    void shouldCreateCouponSuccessfully() {
-        CouponRequestDTO requestDTO = new CouponRequestDTO(
+    void deveCriarESalvarCupomComSucesso() {
+        CouponRequestDTO dtoRequisicao = new CouponRequestDTO(
                 "ABC-123",
                 "Cupom de teste",
                 new BigDecimal("10.00"),
@@ -44,7 +48,7 @@ class CouponServiceTest {
                 true
         );
 
-        CouponEntity entity = CouponEntity.create(
+        CouponEntity entidadeCupom = CouponEntity.create(
                 "ABC-123",
                 "Cupom de teste",
                 new BigDecimal("10.00"),
@@ -52,107 +56,107 @@ class CouponServiceTest {
                 true
         );
 
-        CouponResponseDTO responseDTO = new CouponResponseDTO();
-        responseDTO.setId(entity.getId());
-        responseDTO.setCode(entity.getCode());
+        CouponResponseDTO dtoResposta = new CouponResponseDTO();
+        dtoResposta.setId(entidadeCupom.getId());
+        dtoResposta.setCodigo(entidadeCupom.getCodigo());
 
-        when(couponMapper.toEntity(requestDTO)).thenReturn(entity);
-        when(couponRepository.save(entity)).thenReturn(entity);
-        when(couponMapper.toResponseDTO(entity)).thenReturn(responseDTO);
+        when(couponMapper.toEntity(dtoRequisicao)).thenReturn(entidadeCupom);
+        when(couponRepository.save(entidadeCupom)).thenReturn(entidadeCupom);
+        when(couponMapper.toResponseDTO(entidadeCupom)).thenReturn(dtoResposta);
 
-        CouponResponseDTO response = couponService.create(requestDTO);
+        CouponResponseDTO resposta = couponService.create(dtoRequisicao);
 
-        assertNotNull(response);
-        assertEquals(entity.getId(), response.getId());
-        verify(couponMapper).toEntity(requestDTO);
-        verify(couponRepository).save(entity);
-        verify(couponMapper).toResponseDTO(entity);
+        assertNotNull(resposta);
+        assertEquals(entidadeCupom.getId(), resposta.getId());
+        verify(couponMapper).toEntity(dtoRequisicao);
+        verify(couponRepository).save(entidadeCupom);
+        verify(couponMapper).toResponseDTO(entidadeCupom);
     }
 
     @Test
     @DisplayName("Deve buscar cupom ativo por id")
-    void shouldFindCouponById() {
-        UUID id = UUID.randomUUID();
+    void deveBuscarCupomPorId() {
+        UUID idCupom = UUID.randomUUID();
 
-        CouponEntity entity = CouponEntity.create(
+        CouponEntity entidadeCupom = CouponEntity.create(
                 "ABC123",
                 "Cupom de teste",
                 new BigDecimal("10.00"),
                 LocalDateTime.now().plusDays(1),
                 false
         );
-        entity.setId(id);
+        entidadeCupom.setId(idCupom);
 
-        CouponResponseDTO responseDTO = new CouponResponseDTO();
-        responseDTO.setId(id);
-        responseDTO.setCode("ABC123");
+        CouponResponseDTO dtoResposta = new CouponResponseDTO();
+        dtoResposta.setId(idCupom);
+        dtoResposta.setCodigo("ABC123");
 
-        when(couponRepository.findById(id)).thenReturn(Optional.of(entity));
-        when(couponMapper.toResponseDTO(entity)).thenReturn(responseDTO);
+        when(couponRepository.findById(idCupom)).thenReturn(Optional.of(entidadeCupom));
+        when(couponMapper.toResponseDTO(entidadeCupom)).thenReturn(dtoResposta);
 
-        CouponResponseDTO response = couponService.findById(id);
+        CouponResponseDTO resposta = couponService.findById(idCupom);
 
-        assertNotNull(response);
-        assertEquals(id, response.getId());
-        verify(couponRepository).findById(id);
-        verify(couponMapper).toResponseDTO(entity);
+        assertNotNull(resposta);
+        assertEquals(idCupom, resposta.getId());
+        verify(couponRepository).findById(idCupom);
+        verify(couponMapper).toResponseDTO(entidadeCupom);
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao buscar cupom inexistente")
-    void shouldThrowExceptionWhenCouponNotFound() {
-        UUID id = UUID.randomUUID();
+    void deveLancarExcecaoAoBuscarCupomInexistente() {
+        UUID idCupom = UUID.randomUUID();
 
-        when(couponRepository.findById(id)).thenReturn(Optional.empty());
+        when(couponRepository.findById(idCupom)).thenReturn(Optional.empty());
 
-        CouponNotFoundException exception = assertThrows(
+        CouponNotFoundException excecao = assertThrows(
                 CouponNotFoundException.class,
-                () -> couponService.findById(id)
+                () -> couponService.findById(idCupom)
         );
 
-        assertEquals("Cupom não encontrado.", exception.getMessage());
-        verify(couponRepository).findById(id);
+        assertEquals("Cupom não encontrado.", excecao.getMessage());
+        verify(couponRepository).findById(idCupom);
         verify(couponMapper, never()).toResponseDTO(any());
     }
 
     @Test
     @DisplayName("Deve realizar soft delete com sucesso")
-    void shouldDeleteCouponSuccessfully() {
-        UUID id = UUID.randomUUID();
+    void deveRealizarSoftDeleteComSucesso() {
+        UUID idCupom = UUID.randomUUID();
 
-        CouponEntity entity = CouponEntity.create(
+        CouponEntity entidadeCupom = CouponEntity.create(
                 "ABC123",
                 "Cupom de teste",
                 new BigDecimal("10.00"),
                 LocalDateTime.now().plusDays(1),
                 false
         );
-        entity.setId(id);
+        entidadeCupom.setId(idCupom);
 
-        when(couponRepository.findById(id)).thenReturn(Optional.of(entity));
-        when(couponRepository.save(entity)).thenReturn(entity);
+        when(couponRepository.findById(idCupom)).thenReturn(Optional.of(entidadeCupom));
+        when(couponRepository.save(entidadeCupom)).thenReturn(entidadeCupom);
 
-        couponService.deleteById(id);
+        couponService.deleteById(idCupom);
 
-        assertTrue(entity.isDeleted());
-        verify(couponRepository).findById(id);
-        verify(couponRepository).save(entity);
+        assertTrue(entidadeCupom.isDeleted());
+        verify(couponRepository).findById(idCupom);
+        verify(couponRepository).save(entidadeCupom);
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao deletar cupom inexistente")
-    void shouldThrowExceptionWhenDeletingNonExistingCoupon() {
-        UUID id = UUID.randomUUID();
+    void deveLancarExcecaoAoDeletarCupomInexistente() {
+        UUID idCupom = UUID.randomUUID();
 
-        when(couponRepository.findById(id)).thenReturn(Optional.empty());
+        when(couponRepository.findById(idCupom)).thenReturn(Optional.empty());
 
-        CouponNotFoundException exception = assertThrows(
+        CouponNotFoundException excecao = assertThrows(
                 CouponNotFoundException.class,
-                () -> couponService.deleteById(id)
+                () -> couponService.deleteById(idCupom)
         );
 
-        assertEquals("Cupom não encontrado.", exception.getMessage());
-        verify(couponRepository).findById(id);
+        assertEquals("Cupom não encontrado.", excecao.getMessage());
+        verify(couponRepository).findById(idCupom);
         verify(couponRepository, never()).save(any());
     }
 }

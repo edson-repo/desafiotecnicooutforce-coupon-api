@@ -35,26 +35,26 @@ public class CouponEntity {
     private UUID id;
 
     @Column(nullable = false, length = 6)
-    private String code;
+    private String codigo;
 
     @Column(nullable = false)
-    private String description;
+    private String descricao;
 
     @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal discountValue;
+    private BigDecimal valorDesconto;
 
     @Column(nullable = false)
-    private LocalDateTime expirationDate;
+    private LocalDateTime dataExpiracao;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CouponStatus status;
 
     @Column(nullable = false)
-    private Boolean published;
+    private Boolean publicado;
 
     @Column(nullable = false)
-    private Boolean redeemed;
+    private Boolean utilizado;
 
     @Column
     private LocalDateTime deletedAt;
@@ -63,27 +63,27 @@ public class CouponEntity {
      * Cria um novo cupom já aplicando as regras de negócio da criação.
      */
     public static CouponEntity create(
-            String code,
-            String description,
-            BigDecimal discountValue,
-            LocalDateTime expirationDate,
-            Boolean published
+            String codigo,
+            String descricao,
+            BigDecimal valorDesconto,
+            LocalDateTime dataExpiracao,
+            Boolean publicado
     ) {
-        String sanitizedCode = sanitizeCode(code);
-        validateCode(sanitizedCode);
-        validateDescription(description);
-        validateDiscountValue(discountValue);
-        validateExpirationDate(expirationDate);
+        String sanitizedCode = sanitizacaoCodigo(codigo);
+        validarCodigo(sanitizedCode);
+        validateDescription(descricao);
+        validarValorDesconto(valorDesconto);
+        validarDataExpeiracao(dataExpiracao);
 
         CouponEntity coupon = new CouponEntity();
         coupon.setId(UUID.randomUUID());
-        coupon.setCode(sanitizedCode);
-        coupon.setDescription(description.trim());
-        coupon.setDiscountValue(discountValue);
-        coupon.setExpirationDate(expirationDate);
+        coupon.setCodigo(sanitizedCode);
+        coupon.setDescricao(descricao.trim());
+        coupon.setValorDesconto(valorDesconto);
+        coupon.setDataExpiracao(dataExpiracao);
         coupon.setStatus(CouponStatus.ACTIVE);
-        coupon.setPublished(published != null ? published : Boolean.FALSE);
-        coupon.setRedeemed(Boolean.FALSE);
+        coupon.setPublicado(publicado != null ? publicado : Boolean.FALSE);
+        coupon.setUtilizado(Boolean.FALSE);
         coupon.setDeletedAt(null);
 
         return coupon;
@@ -112,23 +112,23 @@ public class CouponEntity {
     /**
      * Remove qualquer caractere que não seja letra ou número.
      */
-    private static String sanitizeCode(String code) {
-        if (code == null) {
+    private static String sanitizacaoCodigo(String codigo) {
+        if (codigo == null) {
             return null;
         }
 
-        return code.replaceAll("[^a-zA-Z0-9]", "");
+        return codigo.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     /**
      * O código final precisa ter exatamente 6 caracteres.
      */
-    private static void validateCode(String code) {
-        if (code == null || code.isBlank()) {
+    private static void validarCodigo(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
             throw new BusinessException("O código do cupom é obrigatório.");
         }
 
-        if (code.length() != 6) {
+        if (codigo.length() != 6) {
             throw new BusinessException("O código do cupom deve ter exatamente 6 caracteres alfanuméricos.");
         }
     }
@@ -136,8 +136,8 @@ public class CouponEntity {
     /**
      * A descrição é obrigatória.
      */
-    private static void validateDescription(String description) {
-        if (description == null || description.isBlank()) {
+    private static void validateDescription(String descricao) {
+        if (descricao == null || descricao.isBlank()) {
             throw new BusinessException("A descrição do cupom é obrigatória.");
         }
     }
@@ -145,12 +145,12 @@ public class CouponEntity {
     /**
      * O desconto mínimo permitido é 0.5.
      */
-    private static void validateDiscountValue(BigDecimal discountValue) {
-        if (discountValue == null) {
+    private static void validarValorDesconto(BigDecimal valorDesconto) {
+        if (valorDesconto == null) {
             throw new BusinessException("O valor de desconto é obrigatório.");
         }
 
-        if (discountValue.compareTo(new BigDecimal("0.5")) < 0) {
+        if (valorDesconto.compareTo(new BigDecimal("0.5")) < 0) {
             throw new BusinessException("O valor mínimo de desconto é 0.5.");
         }
     }
@@ -158,12 +158,12 @@ public class CouponEntity {
     /**
      * Não permite cupom com data de expiração no passado.
      */
-    private static void validateExpirationDate(LocalDateTime expirationDate) {
-        if (expirationDate == null) {
+    private static void validarDataExpeiracao(LocalDateTime dataExpiracao) {
+        if (dataExpiracao == null) {
             throw new BusinessException("A data de expiração é obrigatória.");
         }
 
-        if (expirationDate.isBefore(LocalDateTime.now())) {
+        if (dataExpiracao.isBefore(LocalDateTime.now())) {
             throw new BusinessException("A data de expiração não pode estar no passado.");
         }
     }

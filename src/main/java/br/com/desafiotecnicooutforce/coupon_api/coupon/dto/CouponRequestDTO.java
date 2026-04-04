@@ -21,20 +21,20 @@ import java.time.LocalDateTime;
 public class CouponRequestDTO {
 
     @NotBlank(message = "O código do cupom é obrigatório.")
-    private String code;
+    private String codigo;
 
     @NotBlank(message = "A descrição do cupom é obrigatória.")
-    private String description;
+    private String descricao;
 
     @NotNull(message = "O valor de desconto é obrigatório.")
     @DecimalMin(value = "0.5", inclusive = true, message = "O valor mínimo de desconto é 0.5.")
-    private BigDecimal discountValue;
+    private BigDecimal valorDesconto;
 
     @NotNull(message = "A data de expiração é obrigatória.")
-    private LocalDateTime expirationDate;
+    private LocalDateTime dataExpiracao;
 
     /**
      * Pode vir nulo. Nesse caso, a entidade assume false por padrão.
      */
-    private Boolean published;
+    private Boolean publicado;
 }
